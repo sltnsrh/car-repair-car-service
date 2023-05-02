@@ -4,6 +4,7 @@ import com.salatin.car.model.Car;
 import com.salatin.car.repository.CarRepository;
 import com.salatin.car.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,13 +25,13 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Mono<Car> findByUser(String userId) {
-        return carRepository.findByUserId(userId);
-    }
+    public Flux<Car> findAll(PageRequest pageRequest) {
+        int firstElement = pageRequest.getPageNumber() * pageRequest.getPageSize();
+        int lastElement = firstElement + pageRequest.getPageSize();
 
-    @Override
-    public Flux<Car> findAll() {
-        return carRepository.findAll();
+        return carRepository.findAll(pageRequest.getSort())
+            .limitRate(firstElement, lastElement)
+            .log();
     }
 
     @Override
