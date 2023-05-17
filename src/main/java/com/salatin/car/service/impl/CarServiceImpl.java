@@ -4,8 +4,11 @@ import com.salatin.car.model.Car;
 import com.salatin.car.repository.CarRepository;
 import com.salatin.car.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,7 +19,10 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Mono<Car> save(Car car) {
-        return carRepository.save(car);
+        return carRepository.save(car)
+            .onErrorResume(DuplicateKeyException.class,
+                ex -> Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Can't create a new car", ex)));
     }
 
     @Override
