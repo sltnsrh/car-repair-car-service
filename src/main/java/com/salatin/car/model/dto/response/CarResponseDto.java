@@ -10,5 +10,5 @@ public class CarResponseDto {
     private String licencePlate;
     private Short productionYear;
     private String vin;
-    private String userId;
+    private String ownerId;
 }
