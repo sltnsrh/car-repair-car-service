@@ -10,8 +10,8 @@ import org.mapstruct.Mapping;
 public interface CarMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "ownerId", ignore = true)
-    Car toModel(CarRegistrationRequestDto dto);
+    @Mapping(target = "ownerId", expression = "java(ownerId)")
+    Car toModel(CarRegistrationRequestDto dto, String ownerId);
 
     CarResponseDto toDto(Car car);
 }

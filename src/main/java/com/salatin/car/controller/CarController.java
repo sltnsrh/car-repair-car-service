@@ -25,8 +25,7 @@ public class CarController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public Mono<Car> create(@RequestBody CarRegistrationRequestDto requestDto,
                             Authentication authentication) {
-        var car = carMapper.toModel(requestDto);
-        car.setOwnerId(authentication.getName());
+        var car = carMapper.toModel(requestDto, authentication.getName());
 
         return carService.save(car);
     }
