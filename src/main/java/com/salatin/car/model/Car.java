@@ -13,13 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString
 public class Car {
     @Id
-    @Indexed(unique = true)
     private String id;
     private String brand;
     private String model;
+    @Indexed(unique = true)
     private String licencePlate;
     private Short productionYear;
-    private String vin;
     @Indexed(unique = true)
+    private String vin;
     private String ownerId;
 }
