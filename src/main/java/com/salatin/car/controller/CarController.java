@@ -4,6 +4,7 @@ import com.salatin.car.model.Car;
 import com.salatin.car.model.dto.request.CarRegistrationRequestDto;
 import com.salatin.car.service.CarService;
 import com.salatin.car.service.mapper.CarMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -23,7 +24,7 @@ public class CarController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Mono<Car> create(@RequestBody CarRegistrationRequestDto requestDto,
+    public Mono<Car> create(@RequestBody @Valid CarRegistrationRequestDto requestDto,
                             JwtAuthenticationToken authentication) {
         var car = carMapper.toModel(requestDto, authentication.getName());
 
