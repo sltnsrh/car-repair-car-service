@@ -33,10 +33,10 @@ public class CarServiceImpl implements CarService {
     @Override
     public Flux<Car> findAll(PageRequest pageRequest) {
         int firstElement = pageRequest.getPageNumber() * pageRequest.getPageSize();
-        int lastElement = firstElement + pageRequest.getPageSize();
 
         return carRepository.findAll(pageRequest.getSort())
-            .limitRate(firstElement, lastElement)
+            .skip(firstElement)
+            .take(pageRequest.getPageSize())
             .log();
     }
 
