@@ -30,11 +30,11 @@ public class CarController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Mono<Car> create(@RequestBody @Valid CarRegistrationRequestDto requestDto,
+    public Mono<CarResponseDto> create(@RequestBody @Valid CarRegistrationRequestDto requestDto,
                             JwtAuthenticationToken authentication) {
         var car = carMapper.toModel(requestDto, authentication.getName());
 
-        return carService.save(car);
+        return carService.save(car).map(carMapper::toDto);
     }
 
     @GetMapping
