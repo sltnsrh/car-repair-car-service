@@ -1,6 +1,5 @@
 package com.salatin.car.controller;
 
-import com.salatin.car.model.Car;
 import com.salatin.car.model.dto.request.CarRegistrationRequestDto;
 import com.salatin.car.model.dto.response.CarResponseDto;
 import com.salatin.car.service.CarService;
@@ -34,7 +33,8 @@ public class CarController {
                             JwtAuthenticationToken authentication) {
         var car = carMapper.toModel(requestDto, authentication.getName());
 
-        return carService.save(car).map(carMapper::toDto);
+        return carService.save(car)
+            .map(carMapper::toDto);
     }
 
     @GetMapping

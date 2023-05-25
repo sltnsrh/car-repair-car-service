@@ -11,4 +11,6 @@ public class CarResponseDto {
     private Short productionYear;
     private String vin;
     private String ownerId;
+    private String createdAt;
+    private String updatedAt;
 }
