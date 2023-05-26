@@ -8,7 +8,7 @@ import java.time.Year;
 import lombok.Data;
 
 @Data
-public class CarRegistrationRequestDto {
+public class CarRequestDto {
     @NotBlank(message = "Brand can't be empty")
     private String brand;
     @NotBlank(message = "Model can't be empty")

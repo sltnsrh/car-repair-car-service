@@ -26,6 +26,13 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    public Mono<Car> update(Car car) {
+
+
+        return null;
+    }
+
+    @Override
     public Mono<Car> findById(String id) {
         return carRepository.findById(id);
     }

@@ -1,6 +1,6 @@
 package com.salatin.car.controller;
 
-import com.salatin.car.model.dto.request.CarRegistrationRequestDto;
+import com.salatin.car.model.dto.request.CarRequestDto;
 import com.salatin.car.model.dto.response.CarResponseDto;
 import com.salatin.car.service.CarService;
 import com.salatin.car.service.mapper.CarMapper;
@@ -29,7 +29,7 @@ public class CarController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Mono<CarResponseDto> create(@RequestBody @Valid CarRegistrationRequestDto requestDto,
+    public Mono<CarResponseDto> create(@RequestBody @Valid CarRequestDto requestDto,
                             JwtAuthenticationToken authentication) {
         var car = carMapper.toModel(requestDto, authentication.getName());
 
