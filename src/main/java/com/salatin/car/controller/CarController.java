@@ -32,6 +32,7 @@ public class CarController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
+    @PreAuthorize(value = "hasRole('customer')")
     public Mono<CarResponseDto> create(@RequestBody @Valid CarRequestDto requestDto,
                             JwtAuthenticationToken authentication) {
         var car = carMapper.toModel(requestDto, authentication.getName());
@@ -41,6 +42,7 @@ public class CarController {
     }
 
     @GetMapping
+    @PreAuthorize(value = "hasAnyRole('admin', 'manager')")
     public Flux<CarResponseDto> findAll(@RequestParam(defaultValue = "0") Integer page,
                                         @RequestParam(defaultValue = "10") Integer size,
                                         @RequestParam(defaultValue = "brand") String sortByField,
