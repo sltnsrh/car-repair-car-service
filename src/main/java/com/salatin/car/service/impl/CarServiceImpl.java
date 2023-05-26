@@ -43,6 +43,7 @@ public class CarServiceImpl implements CarService {
                     carMapper.updateCarFromDb(car, carFromDb);
                     return this.save(carFromDb);
                 }
+
                 return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Unauthorized to update the car"));
             });
