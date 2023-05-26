@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeExchange()
-            .pathMatchers("/cars/**").hasAnyRole("customer", "admin")
+            .pathMatchers("/cars/**").hasAnyRole("customer", "admin", "manager")
             .anyExchange().authenticated()
             .and()
             .oauth2ResourceServer()

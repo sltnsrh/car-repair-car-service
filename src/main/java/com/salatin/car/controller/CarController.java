@@ -9,9 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +50,17 @@ public class CarController {
                 Sort.Direction.valueOf(direction.toUpperCase()), sortByField);
 
         return carService.findAll(pageRequest)
+            .map(carMapper::toDto);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize(value = "hasAnyRole('customer', 'admin')")
+    public Mono<CarResponseDto> update(@RequestBody @Valid CarRequestDto requestDto,
+                                       @PathVariable String id,
+                                       JwtAuthenticationToken authentication) {
+        var car = carMapper.toModel(requestDto);
+
+        return carService.update(car, id, authentication)
             .map(carMapper::toDto);
     }
 }

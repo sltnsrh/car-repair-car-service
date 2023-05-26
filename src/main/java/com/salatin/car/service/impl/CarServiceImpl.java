@@ -3,10 +3,12 @@ package com.salatin.car.service.impl;
 import com.salatin.car.model.Car;
 import com.salatin.car.repository.CarRepository;
 import com.salatin.car.service.CarService;
+import com.salatin.car.service.mapper.CarMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
+    private final CarMapper carMapper;
 
     @Override
     public Mono<Car> save(Car car) {
@@ -26,10 +29,23 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Mono<Car> update(Car car) {
+    public Mono<Car> update(Car car, String id, JwtAuthenticationToken authentication) {
+        return this.findById(id)
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Can't find a car with id " + id)))
+            .flatMap(carFromDb -> {
+                var hasRoleAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> "ROLE_admin".equals(a.getAuthority()));
+                var hasPermission = authentication.getName().equals(carFromDb.getOwnerId())
+                    || hasRoleAdmin;
 
-
-        return null;
+                if (hasPermission) {
+                    carMapper.updateCarFromDb(car, carFromDb);
+                    return this.save(carFromDb);
+                }
+                return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Unauthorized to update the car"));
+            });
     }
 
     @Override
