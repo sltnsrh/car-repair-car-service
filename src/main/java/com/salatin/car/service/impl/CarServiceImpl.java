@@ -34,12 +34,7 @@ public class CarServiceImpl implements CarService {
             .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
                 "Can't find a car with id " + id)))
             .flatMap(carFromDb -> {
-                var hasRoleAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> "ROLE_admin".equals(a.getAuthority()));
-                var hasPermission = authentication.getName().equals(carFromDb.getOwnerId())
-                    || hasRoleAdmin;
-
-                if (hasPermission) {
+                if (isOwnerOrAdmin(authentication, carFromDb)) {
                     carMapper.updateCarFromDb(car, carFromDb);
                     return this.save(carFromDb);
                 }
@@ -65,7 +60,24 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public Mono<Void> delete(Car car) {
-        return carRepository.delete(car);
+    public Mono<Void> delete(String id, JwtAuthenticationToken authentication) {
+        return this.findById(id)
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
+                "Can't find a car with id " + id)))
+            .flatMap(carFromDb -> {
+                if (isOwnerOrAdmin(authentication, carFromDb)) {
+                    return carRepository.delete(carFromDb);
+                }
+
+                return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Unauthorized to delete the car"));
+            });
+    }
+
+    private boolean isOwnerOrAdmin(JwtAuthenticationToken authentication, Car carFromDb) {
+        var hasRoleAdmin = authentication.getAuthorities().stream()
+            .anyMatch(a -> "ROLE_admin".equals(a.getAuthority()));
+        return authentication.getName().equals(carFromDb.getOwnerId())
+            || hasRoleAdmin;
     }
 }

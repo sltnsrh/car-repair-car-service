@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,5 +65,14 @@ public class CarController {
 
         return carService.update(car, id, authentication)
             .map(carMapper::toDto);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize(value = "hasAnyRole('customer', 'admin')")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public Mono<Void> delete(@PathVariable String id,
+                             JwtAuthenticationToken authentication) {
+
+        return carService.delete(id, authentication);
     }
 }
