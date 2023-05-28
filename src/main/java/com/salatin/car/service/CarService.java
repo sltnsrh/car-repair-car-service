@@ -17,4 +17,6 @@ public interface CarService {
     Flux<Car> findAll(PageRequest pageRequest);
 
     Mono<Void> delete(String id, JwtAuthenticationToken authentication);
+
+    Flux<Car> findAllByUser(String ownerId);
 }

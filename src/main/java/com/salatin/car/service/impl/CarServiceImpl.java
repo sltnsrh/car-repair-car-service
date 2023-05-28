@@ -74,6 +74,11 @@ public class CarServiceImpl implements CarService {
             });
     }
 
+    @Override
+    public Flux<Car> findAllByUser(String ownerId) {
+        return carRepository.findByOwnerId(ownerId);
+    }
+
     private boolean isOwnerOrAdmin(JwtAuthenticationToken authentication, Car carFromDb) {
         var hasRoleAdmin = authentication.getAuthorities().stream()
             .anyMatch(a -> "ROLE_admin".equals(a.getAuthority()));

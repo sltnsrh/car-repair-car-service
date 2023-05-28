@@ -75,4 +75,12 @@ public class CarController {
 
         return carService.delete(id, authentication);
     }
+
+    @GetMapping("/my-list")
+    @PreAuthorize(value = "hasRole('customer')")
+    public Flux<CarResponseDto> findMyCars(JwtAuthenticationToken authentication) {
+
+        return carService.findAllByUser(authentication.getName())
+            .map(carMapper::toDto);
+    }
 }
