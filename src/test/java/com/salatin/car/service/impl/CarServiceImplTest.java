@@ -13,11 +13,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -144,10 +147,23 @@ class CarServiceImplTest {
     }
 
     @Test
-    void deleteWhenCarExistsAndUserIsOwnerThenReturnVoid() {
+    void deleteWhenCarExistsAndUserIsOwnerThenDeleteSuccess() {
         when(carService.findById(CAR_ID)).thenReturn(Mono.just(createCarWithIdAndOwnerId()));
         when(carRepository.delete(any())).thenReturn(Mono.empty());
         when(jwtAuthenticationToken.getName()).thenReturn(USER_ID);
+
+        StepVerifier.create(carService.delete(CAR_ID, jwtAuthenticationToken))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void deleteWhenUserIsAdminThenDeleteSuccess() {
+        when(carService.findById(CAR_ID)).thenReturn(Mono.just(createCarWithIdAndOwnerId()));
+        when(carRepository.delete(any())).thenReturn(Mono.empty());
+        when(jwtAuthenticationToken.getName()).thenReturn("adminUserId");
+        when(jwtAuthenticationToken.getAuthorities())
+                .thenReturn(Collections.singletonList(new SimpleGrantedAuthority("ROLE_admin")));
 
         StepVerifier.create(carService.delete(CAR_ID, jwtAuthenticationToken))
                 .expectComplete()
