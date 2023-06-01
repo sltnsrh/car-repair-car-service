@@ -25,7 +25,8 @@ public class CarServiceImpl implements CarService {
         return carRepository.save(car)
             .onErrorResume(DuplicateKeyException.class,
                 ex -> Mono.error(new ResponseStatusException(HttpStatus.CONFLICT,
-                    "Can't create a new car", ex)));
+                    "Can't create a new car", ex)))
+                .log();
     }
 
     @Override
@@ -41,7 +42,7 @@ public class CarServiceImpl implements CarService {
 
                 return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Unauthorized to update the car"));
-            });
+            }).log();
     }
 
     @Override
@@ -71,12 +72,12 @@ public class CarServiceImpl implements CarService {
 
                 return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "Unauthorized to delete the car"));
-            });
+            }).log();
     }
 
     @Override
     public Flux<Car> findAllByUser(String ownerId) {
-        return carRepository.findByOwnerId(ownerId);
+        return carRepository.findByOwnerId(ownerId).log();
     }
 
     private boolean isOwnerOrAdmin(JwtAuthenticationToken authentication, Car carFromDb) {
