@@ -134,6 +134,7 @@
 							<excludes>
 								<exclude>com/salatin/car/CarServiceApplication.class</exclude>
 								<exclude>com/salatin/car/model/**</exclude>
+								<exclude>com/salatin/car/service/mapper/CarMapperImpl.class</exclude>
 							</excludes>
 						</configuration>
 					</execution>
