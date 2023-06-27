@@ -125,4 +125,16 @@ class CarControllerTest {
         verify(carService).findAllByUser(USER_ID);
         verify(carMapper).toDto(car);
     }
+
+    @Test
+    void findByIdWhenValidIdThenReturnsOneCarResponseDto() {
+        when(carService.findById(CAR_ID)).thenReturn(Mono.just(car));
+        when(carMapper.toDto(car)).thenReturn(carResponseDto);
+
+        StepVerifier.create(carController.findById(CAR_ID))
+                .expectNext(carResponseDto)
+                .verifyComplete();
+        verify(carService).findById(CAR_ID);
+        verify(carMapper).toDto(car);
+    }
 }

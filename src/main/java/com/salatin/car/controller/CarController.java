@@ -56,6 +56,13 @@ public class CarController {
             .map(carMapper::toDto);
     }
 
+    @GetMapping("/{id}")
+    @PreAuthorize(value = "hasAnyRole('admin', 'manager', 'customer')")
+    public Mono<CarResponseDto> findById(@PathVariable String id) {
+        return carService.findById(id)
+                .map(carMapper::toDto);
+    }
+
     @GetMapping("/by-owner/{userId}")
     @PreAuthorize(value = "hasRole('manager')")
     public Flux<CarResponseDto> findAllByOwner(@PathVariable String userId) {

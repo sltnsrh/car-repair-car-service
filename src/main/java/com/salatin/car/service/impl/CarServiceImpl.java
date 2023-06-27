@@ -5,6 +5,7 @@ import com.salatin.car.repository.CarRepository;
 import com.salatin.car.service.CarService;
 import com.salatin.car.service.mapper.CarMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
     private final CarMapper carMapper;
@@ -47,6 +49,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Mono<Car> findById(String id) {
+        log.info("Looking for a car with id: {}", id);
         return carRepository.findById(id);
     }
 
